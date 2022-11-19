@@ -117,7 +117,7 @@ def byteArrayCreate():
                                                 # BYTEARRAY READ/GET
 ###########################################################################################################
 
-def byteArrayGet():
+def byteArrayReadInto():
     data = bytearray(10)
 
     try:
@@ -133,3 +133,55 @@ def byteArrayGet():
 
 # Ingresa aquí el código que lee los bytes del stream :
 ## 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0
+
+def byteArrayRead():
+    try:
+        binary_file = open('file.bin', 'rb')
+        data = bytearray(binary_file.read(5))
+        binary_file.close()
+
+        for b in data:
+            print(hex(b), end=' ')
+
+    except IOError as e:
+        print("Se produjo un error de E/S:", strerror(e.errno))
+
+###########################################################################################################
+                                                # COPY FILES
+###########################################################################################################
+
+
+def copyFiles():
+
+    source_file_name = input("Ingresa el nombre del archivo fuente: ")
+    try:
+        source_file = open(source_file_name, 'rb')
+    except IOError as e:
+        print("No se puede abrir archivo fuente: ", strerror(e.errno))
+        exit(e.errno)	
+
+    destination_file_name = input("Ingresa el nombre del archivo destino: ")
+    try:
+        destination_file = open(destination_file_name, 'wb')
+    except Exception as e:
+        print("No se puede crear el archivo de destino:", strerror(e.errno))
+        source_file.close()
+        exit(e.errno)	
+
+    buffer = bytearray(65536)
+    total  = 0
+    try:
+        readin = source_file.readinto(buffer)
+        while readin > 0:
+            written = destination_file.write(buffer[:readin])
+            total += written
+            readin = source_file.readinto(buffer)
+    except IOError as e:
+        print("No se puede crear el archivo de destino: ", strerror(e.errno))
+        exit(e.errno)	
+        
+    print(total,'byte(s) escritos con éxito')
+    source_file.close()
+    destination_file.close()
+
+copyFiles()
